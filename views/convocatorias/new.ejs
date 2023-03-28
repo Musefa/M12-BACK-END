@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+    <%- include('../partials/header'); %>
+  </header>
+  <main>
+    <div class="row mt-5">
+      <div class="col">
+        <h1 class="display-5">
+          <strong>Nova convocatòria</strong>
+        </h1>
+        <% if (typeof errors !=="undefined" ) { %>
+          <div class="alert alert-danger mt-2" role="alert">
+            <% errors.forEach(function(error) { %>
+              <p>
+                <%= error.msg %>
+              </p>
+              <% }) %>
+          </div>
+          <% } %>
+      </div>
+      <div class="col">
+        <form method="POST" action="/convocatorias/create">
+          <div class="form-group">
+            <label for="data">Data:</label>
+            <input type="date" name="data" value="<%= convo.data %>" class="form-control" required>
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="horaInici">Hora d'inici:</label>
+            <input type="time" name="horaInici" value="<%= convo.horaInici %>" class="form-control" required>
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="durada">Durada en minuts:</label>
+            <input type="number" min="0" step="15" name="durada" value="<%= convo.durada %>" class="form-control"
+              required>
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="lloc">Lloc:</label>
+            <input type="text" name="lloc" value="<%= convo.lloc %>" class="form-control" required>
+          </div>
+          <input type="hidden" name="responsable" value="<%= locals.userId %>" class="form-control" required>
+          <br>
+          <div class="form-group">
+            <label for="convocats">Convocats</label>
+            <select name="convocats[]" multiple class="form-control" required>
+              <% grupsList.forEach(function(grup) { %>
+                <option value="<%= grup.id %>">
+                  <%= grup.nom %>
+                </option>
+                <% }); %>
+            </select>
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="plantilla">Plantilla</label>
+            <select name="plantilla" multiple class="form-control" required>
+              <% plantillasList.forEach(function(plantilla) { %>
+                <option value="<%= plantilla.id %>">
+                  <%= plantilla.nom %>
+                </option>
+                <% }); %>
+            </select>
+          </div>
+          <br>
+          <div class="mb-3">
+            <label class="form-label">Ordre del dia</label>
+            <input type="text" name="puntsOrdreDia[]" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" id="addOrdreDia" class="btn btn-secondary">Afegir ordre del dia</button>
+          <button type="button" id="deleteOrdreDia" class="btn btn-danger">Borrar ordre del dia</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.getElementById("addOrdreDia").addEventListener("click", function () {
+        let input = document.createElement("input");
+        input.type = "text";
+        input.name = "puntsOrdreDia[]";
+        input.classList.add("form-control");
+        input.classList.add("mb-3");
+        input.required = true;
+        let label = document.createElement("label");
+        label.classList.add("form-label");
+        label.innerHTML = "Ordre del dia";
+        let form = document.querySelector("form");
+        form.insertBefore(input, document.querySelector("button[type='submit']"));
+        form.insertBefore(label, input);
+      });
+    </script>
+    <script>
+      document.getElementById("deleteOrdreDia").addEventListener("click", function () {
+        let inputs = document.getElementsByName("puntsOrdreDia[]");
+        let lastInput = inputs[inputs.length - 1];
+        let lastLabel = lastInput.previousSibling;
+        lastInput.remove();
+        lastLabel.remove();
+      });
+    </script>
+  </main>
+  <footer>
+    <%- include('../partials/footer'); %>
+  </footer>
+</body>
+
+</html>

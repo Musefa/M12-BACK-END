@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+    <%- include('../partials/header'); %>
+  </header>
+  <main>
+    <div class="bg-image p-5 text-center shadow-1-strong rounded mt-5 mb-5 text-white"
+      style="background-image: url('/images/error.jpg'); background-size: cover; background-repeat: no-repeat; ">
+      <h1 class="mb-3 h2">
+        <p class="fs-2"><span class="text-danger">Something went wrong</span> </p>
+      </h1>
+      <p class="lead">
+        <% if (typeof error !=="undefined" ) { %>
+          <p style="color: black;">
+            <%= error.message %>.
+          </p>
+          <p style="color: red;">Please try it again later.
+          <p>
+            <% } %>
+          </p>
+          <a href="/home" class="btn btn-primary">Go Home</a>
+    </div>
+  </main>
+  <footer>
+    <%- include('../partials/footer'); %>
+  </footer>
+</body>
+
+</html>

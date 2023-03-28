@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Library Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://www.markuptag.com/bootstrap/5/css/bootstrap.min.css">
+</head>
+
+<body>
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <div class="login-form bg-light mt-4 p-4">
+                    <form action="/auth/login" method="POST" class="row g-3">
+                        <h4>Welcome Back</h4>
+                        <div class="col-12">
+                            <label>Email</label>
+                            <input type="text" name="email" class="form-control" placeholder="email">
+                        </div>
+                        <div class="col-12">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="Password">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-dark float-end">Login</button>
+                        </div>
+                    </form>
+                    <hr class="mt-4">
+                    <div class="col-12">
+                        <p class="text-center mb-0">Have not account yet? <a href="/auth/register">Signup</a></p>
+                    </div>
+                </div>
+                <% if (typeof message !=="undefined" ) { %>
+                    <div class="alert alert-danger mt-4" role="alert">
+                        <p>
+                            <%= message %>
+                        </p>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://www.markuptag.com/bootstrap/5/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

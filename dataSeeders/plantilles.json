@@ -1,0 +1,6 @@
+{
+    "plantilles" : [
+        { "nom" : "Juntes d'avaluació", "puntsOrdreDia" : [ "Notes","Excepcions","Conductes","Estat de l'alumnat" ] },
+        { "nom" : "Junta directiva", "puntsOrdreDia" : [ "Inversió","Material escolar", "Gestió cafeteria","Protocols d'emergència" ] }
+    ]
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <main>
+        <% function formatDate(date) { let d=new Date(date); let month='' + (d.getMonth() + 1); let day='' +
+            d.getDate(); let year=d.getFullYear(); if (month.length < 2) month='0' + month; if (day.length < 2) day='0'
+            + day; return [year, month, day].join('-'); } %>
+            <div class="row mt-5">
+                <div class="col">
+                    <h1 class="display-5">
+                        <strong>Actualitzar acord</strong>
+                    </h1>
+                    <% if (typeof errors !=="undefined" ) { %>
+                        <div class="alert alert-danger mt-2" role="alert">
+                            <% errors.forEach(function(error) { %>
+                                <p>
+                                    <%= error.msg %>
+                                </p>
+                                <% }) %>
+                        </div>
+                        <% } %>
+                            <% if (typeof error !=="undefined" ) { %>
+                                <div class="alert alert-primary mt-2" role="alert">
+                                    <p>Form could not be submitted due to the following error:</p>
+                                    <p>
+                                        <%= error %>
+                                    </p>
+                                </div>
+                                <% } %>
+                </div>
+                <div class="col">
+                    <form method="POST" action="/acords/update/<%= acord._id %>">
+                        <div class="form-group">
+                            <label for="dataInici">Data Inici:</label>
+                            <input type="date" name="dataInici" value="<%= formatDate(acord.dataInici) %>"
+                                class="form-control" required>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label for="dataFinal">Data Final:</label>
+                            <input type="date" name="dataFinal" value="<%= formatDate(acord.dataFinal) %>"
+                                class="form-control" required>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label for="descripcio">Descripció:</label>
+                            <textarea name="descripcio" class="form-control"
+                                required><%= htmlDecode(acord.descripcio) %></textarea>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label for="acta">Acta:</label>
+                            <select name="acta" class="form-control" required>
+                                <% actaList.forEach(function(acta) { %>
+                                    <option value="<%= acta._id %>" <% if(acord.acta &&
+                                        acta._id.equals(acord.acta._id)){ %>selected<% } %>><%=
+                                                htmlDecode(acta.convocatoria.lloc) %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Actualitzar</button>
+                        <a class="btn btn-danger" href="/acords/delete/<%= acord._id %>" role="button">Delete</a>
+                    </form>
+                </div>
+            </div>
+    </main>
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+
+</html>

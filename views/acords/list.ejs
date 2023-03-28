@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../partials/head'); %>
+</head>
+
+<body>
+	<header>
+		<%- include('../partials/header'); %>
+	</header>
+	<main>
+		<div class="container">
+			<h1 class="display-3 mt-3">Acords</h1>
+			<div class="table-responsive">
+				<table class="table table-striped ">
+					<thead>
+						<tr>
+							<th scope="col">DataInici</th>
+							<th scope="col">DataFinal</th>
+							<th scope="col">Descripcio</th>
+							<th scope="col">Acta</th>
+							<th scope="col">Responsable</th>
+							<th scope="col">
+								<a href="/acords/create" class="btn btn-primary">Nou acord</a>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% list.forEach(function(acord) { %>
+							<tr>
+								<td>
+									<%= new Date(acord.dataInici).toLocaleDateString('es-ES') ? new
+										Date(acord.dataInici).toLocaleDateString('es-ES') : 'N/A' %>
+								</td>
+								<td>
+									<%= new Date(acord.dataFinal).toLocaleDateString('es-ES') ? new
+										Date(acord.dataFinal).toLocaleDateString('es-ES') : 'N/A' %>
+								</td>
+								<td>
+									<%= acord.descripcio ? htmlDecode(acord.descripcio) : 'N/A' %>
+								</td>
+								<td>
+									<%= acord.acta?.convocatoria?.lloc ? htmlDecode(acord.acta.convocatoria.lloc)
+										: 'N/A' %>
+								</td>
+								<td>
+									<%= acord.acta.convocatoria.responsable.nom ?
+										htmlDecode(acord.acta.convocatoria.responsable.nom) : 'N/A' %>
+								</td>
+								<td>
+									<a href="/acords/update/<%=acord._id%>" class="btn btn-secondary">Editar</a>
+								</td>
+							</tr>
+							<% }); %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</main>
+	<footer>
+		<%- include('../partials/footer'); %>
+	</footer>
+</body>
+
+</html>

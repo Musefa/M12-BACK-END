@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../partials/head'); %>
+</head>
+
+<body>
+	<header>
+		<%- include('../partials/header'); %>
+	</header>
+	<main>
+		<div class="container">
+			<h1 class="display-3 mt-3">Convocatòries</h1>
+			<div class="table-responsive">
+				<table class="table table-striped ">
+					<thead>
+						<tr>
+							<th scope="col">Data</th>
+							<th scope="col">Hora d'inici</th>
+							<th scope="col">Durada</th>
+							<th scope="col">Responsable</th>
+							<th scope="col">Plantilla</th>
+							<th scope="col">Ordres</th>
+							<th scope="col">Convocats</th>
+							<th scope="col">
+								<a href="/convocatorias/create" class="btn btn-primary">Nova convocatòria</a>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% list.forEach(function(convocatoria) { %>
+							<tr>
+								<td>
+									<%= new Date(convocatoria.data).toLocaleDateString('es-ES') ? new
+										Date(convocatoria.data).toLocaleDateString('es-ES') : 'N/A' %>
+								</td>
+								<td>
+									<%= convocatoria.horaInici ? convocatoria.horaInici : 'N/A' %>
+								</td>
+								<td>
+									<%= convocatoria.durada ? convocatoria.durada : 'N/A' %>
+								</td>
+								<td>
+									<%= convocatoria.responsable ? htmlDecode(convocatoria.responsable.nom) : 'N/A' %>
+								</td>
+								<td>
+									<%= convocatoria.plantilla ? htmlDecode(convocatoria.plantilla.nom) : 'N/A' %>
+								</td>
+								<td>
+									<% convocatoria.puntsOrdreDia.forEach(function(ordre) { %>
+										<span class="badge text-bg-secondary">
+											<%= htmlDecode(ordre) %>
+										</span>
+										<% }); %>
+								</td>
+								<td>
+									<% convocatoria.convocats.forEach(function(grup) { %>
+										<% grup.membres.forEach(function(usuario) { %>
+											<span class="badge text-bg-secondary">
+												<%= htmlDecode(usuario.nom) %>, <%= htmlDecode(usuario.cognom) %>
+											</span>
+											<% }); %>
+												<% }); %>
+								</td>
+								<td>
+									<a href="/convocatorias/update/<%=convocatoria._id%>"
+										class="btn btn-secondary">Editar</a>
+								</td>
+							</tr>
+							<% }); %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</main>
+	<footer>
+		<%- include('../partials/footer'); %>
+	</footer>
+</body>
+
+</html>

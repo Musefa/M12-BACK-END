@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+	<header>
+		<%- include('../partials/header'); %>
+	</header>
+	<main>
+		<div class="card mt-2" style="width: 25rem;">
+			<div class="card-body">
+				<h5 class="card-title">Confirm Delete Acta</h5>
+				<form method="POST" action="/actas/delete/<%= id %>">
+					<div class="alert alert-danger" role="alert">
+						Do you really want to delete this acta?
+					</div>
+					<button type="submit" class="btn btn-danger">
+						Delete
+					</button>
+				</form>
+				<% if (typeof error !=="undefined" ) { %>
+					<div class="alert alert-primary mt-2" role="alert">
+						<p>Form could not be submitted due to the following error:</p>
+						<p>
+							<%= error %>
+						</p>
+					</div>
+					<% } %>
+			</div>
+		</div>
+	</main>
+	<footer>
+		<%- include('../partials/footer'); %>
+	</footer>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <main>
+        <div class="row mt-5">
+            <div class="col">
+                <h1 class="display-5">
+                    <strong>New Acta</strong>
+                </h1>
+                <% if (typeof errors !=="undefined" ) { %>
+                    <div class="alert alert-danger mt-2" role="alert">
+                        <% errors.forEach(function(error) { %>
+                            <p>
+                                <%= error.msg %>
+                            </p>
+                            <% }) %>
+                    </div>
+                    <% } %>
+            </div>
+            <div class="col">
+                <form method="POST" action="/actas/create">
+                    <div class="form-group">
+                        <label for="estat">Estat</label>
+                        <select name="estat" multiple class="form-control">
+                            <option value="Oberta">Oberta</option>
+                            <option value="Tancada">Tancada</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="convocatoria">Convocatoria</label>
+                        <select name="convocatoria" multiple class="form-control">
+                            <% convocatoriaList.forEach(function(convocatoria) { %>
+                                <option value="<%= convocatoria.id %>">
+                                    <%= convocatoria.lloc %>
+                                </option>
+                                <% }); %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label class="form-label">Descripcions</label>
+                            <input type="text" name="descripcions[]" class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" id="addDescripcio" class="btn btn-secondary">Agregar Descripció</button>
+                    <button type="button" id="deleteDescripcio" class="btn btn-danger">Borrar Descripció</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            document.getElementById("addDescripcio").addEventListener("click", function () {
+                let input = document.createElement("input");
+                input.type = "text";
+                input.name = "descripcions[]";
+                input.classList.add("form-control");
+                input.classList.add("mb-3");
+                let label = document.createElement("label");
+                label.classList.add("form-label");
+                label.innerHTML = "Descripció";
+                let form = document.querySelector("form");
+                form.insertBefore(input, document.querySelector("button[type='submit']"));
+                form.insertBefore(label, input);
+            });
+        </script>
+        <script>
+            document.getElementById("deleteDescripcio").addEventListener("click", function () {
+                let inputs = document.getElementsByName("descripcions[]");
+                let lastInput = inputs[inputs.length - 1];
+                let lastLabel = lastInput.previousSibling;
+                lastInput.remove();
+                lastLabel.remove();
+            });
+        </script>
+    </main>
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+
+</html>

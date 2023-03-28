@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../partials/head'); %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const addOrdreDiaButton = document.getElementById('addOrdreDia');
+        const deleteOrdreDiaButton = document.getElementById('deleteOrdreDia');
+        let count = document.querySelectorAll('input[name="punts"]').length;
+        function attachDeleteEventListener(deleteButton) {
+          deleteButton.addEventListener('click', function () {
+            this.parentElement.remove();
+          });
+        }
+        addOrdreDiaButton.addEventListener('click', function () {
+          const newOrdreDiaDiv = document.createElement('div');
+          newOrdreDiaDiv.className = 'ordre-dia-wrapper';
+          const label = document.createElement('label');
+          label.className = 'form-label';
+          label.innerText = `ORDRE DEL DIA ${++count}`;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.name = 'punts';
+          input.className = 'form-control';
+          const deleteButton = document.createElement('button');
+          deleteButton.type = 'button';
+          deleteButton.className = 'btn btn-danger mt-2';
+          deleteButton.innerText = 'Borrar Orden del Día';
+          attachDeleteEventListener(deleteButton);
+          newOrdreDiaDiv.appendChild(label);
+          newOrdreDiaDiv.appendChild(input);
+          newOrdreDiaDiv.appendChild(deleteButton);
+          document.getElementById('ordres-dia-container').appendChild(newOrdreDiaDiv);
+        });
+        deleteOrdreDiaButton.addEventListener('click', function () {
+          const ordreDiaWrappers = document.querySelectorAll('.ordre-dia-wrapper');
+          if (ordreDiaWrappers.length > 0) {
+            ordreDiaWrappers[ordreDiaWrappers.length - 1].remove();
+            count--;
+          }
+        });
+        const existingDeleteButtons = document.querySelectorAll('.btn.btn-danger.mt-2');
+        existingDeleteButtons.forEach(attachDeleteEventListener);
+      });
+    </script>
+</head>
+
+<body class="container">
+  <header>
+    <%- include('../partials/header'); %>
+  </header>
+  <main>
+    <div class="col">
+      <form method="POST" action="/plantillas/update/<%= plantilla._id %>">
+        <div class="mb-3">
+          <label class="form-label">NOMBRE</label>
+          <input type="text" name="nom" class="form-control" value="<%- htmlDecode(plantilla.nom) %>">
+          <br>
+          <div id="ordres-dia-container">
+            <% var count=1; plantilla.puntsOrdreDia.forEach(function(puntsOrdreDia) { %>
+              <div class="ordre-dia-wrapper">
+                <label class="form-label">ORDRE DEL DIA <%= count %></label>
+                <input type="text" name="punts" class="form-control" value="<%= htmlDecode(puntsOrdreDia) %>">
+                <button type="button" class="btn btn-danger mt-2">Borrar Orden del Día</button>
+              </div>
+              <% count++; %>
+                <% }); %>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">GUARDAR
+        </button>
+        <button type="button" id="addOrdreDia" class="btn btn-secondary">Agregar Orden del Día</button>
+        <button type="button" id="deleteOrdreDia" class="btn btn-danger">Eliminar último Orden del Día</button>
+        <% if (typeof errors !=="undefined" ) { %>
+          <div class="alert alert-danger mt-2" role="alert">
+            <% errors.forEach(function(error) { %>
+              <p>
+                <%= error.msg %>
+              </p>
+              <% }) %>
+          </div>
+          <% } %>
+            <% if (typeof error !=="undefined" ) { %>
+              <div class="alert alert-primary mt-2" role="alert">
+                <p>Form could not be submitted due to the following error:</p>
+                <p>
+                  <%= error %>
+                </p>
+              </div>
+              <% } %>
+                <a class="link-secondary" href="/plantillas/delete/<%= plantilla._id %>" role="button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                    <path fill-rule="evenodd"
+                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                  </svg>
+                </a>
+      </form>
+    </div>
+  </main>
+  <footer>
+    <%- include('../partials/footer'); %>
+  </footer>
+</body>
+
+</html>

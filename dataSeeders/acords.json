@@ -1,0 +1,14 @@
+{
+    "acords" : [
+        { "dataInici" : "", 
+          "dataFinal" : "",
+          "descripcio" : "Descripción 1",
+          "acta" : ""
+        },
+        { "dataInici" : "", 
+          "dataFinal" : "",
+          "descripcio" : "Descripción 2",
+          "acta" : ""
+        }
+    ]
+}

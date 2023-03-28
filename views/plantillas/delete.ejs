@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+	<header>
+		<%- include('../partials/header'); %>
+	</header>
+	<main>
+		<div class="row mt-5">
+			<div class="col p-5">
+				<h5>
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="/plantillas" class="link-secondary">PLANTILLAS</a></li>
+							<li class="breadcrumb-item">
+								<a href="/plantillas/update/<%=id %>" class="link-secondary">EDITAR</a>
+							</li>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">
+								<strong>BORRAR</strong>
+							</li>
+						</ol>
+					</nav>
+				</h5>
+				<p class="lead">
+					ELIMINAR PLANTILLAS
+				</p>
+			</div>
+			<div class="col">
+				<div class="card mt-4">
+					<div class="card-header">
+						<h5 class="card-title">CONFIRMA LA PLANTILLA A BORRAR</h5>
+					</div>
+					<div class="card-body">
+						<form method="POST" action="/plantillas/delete/<%= id %>">
+							<div class="alert alert-danger" role="alert">
+								¿DE VERDAD QUIERES BORRAR ESTA PLANTILLA?
+							</div>
+							<button type="submit" class="btn btn-danger">
+								BORRAR
+							</button>
+						</form>
+						<% if (typeof error !=="undefined" ) { %>
+							<div class="alert alert-primary mt-2" role="alert">
+								<p>Form could not be submitted due to the following error:</p>
+								<p>
+									<%= error %>
+								</p>
+							</div>
+							<% } %>
+					</div>
+				</div>
+	</main>
+
+	<footer>
+		<%- include('../partials/footer'); %>
+	</footer>
+</body>
+
+</html>
