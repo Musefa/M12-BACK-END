@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var cors = require('cors');
+router.use(cors());
 
 // Require user controller.
 var authController = require('../controllers/authController');
@@ -10,7 +12,7 @@ var authController = require('../controllers/authController');
 router.get('/login', authController.login_get);
 
 // POST request for login page.
-router.post('/login',authController.loginRules, authController.login_post);
+router.post('/login', authController.login_post);
 
 // GET request for logout page.
 router.get('/logout', authController.logout_get);

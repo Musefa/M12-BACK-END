@@ -3,6 +3,7 @@ var path = require('path');
 var dotenv = require('dotenv');
 var session = require('express-session');
 var favicon = require('serve-favicon');
+const cors = require('cors');
 
 var indexRouter = require('./routes/indexRouter');
 var authRouter = require('./routes/authRouter'); 
@@ -15,6 +16,8 @@ var acordsRouter = require('./routes/acordsRouter');
 var app = express();
 
 dotenv.config();
+app.use(cors());
+app.use(express.json());
 
 const port = process.env.PORT || 8000;
 
