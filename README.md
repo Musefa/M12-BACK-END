@@ -1,6 +1,6 @@
 # M12-NODE
 
-MONGODB_URI=mongodb+srv://erga916:1615003e@cluster0.ev88ezk.mongodb.net/GESTIO-DE-REUNIONS
+MONGODB_URI=
 
 SECRET = "secret"
 
