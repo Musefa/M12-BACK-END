@@ -21,7 +21,7 @@ router.get('/logout', authController.logout_get);
 router.get('/register', authController.register_get);
 
 // POST request for create User.
-router.post('/register', authController.registerRules, authController.register_post);
+router.post('/register', authController.register_post);
 
 
 module.exports = router;

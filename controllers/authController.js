@@ -144,7 +144,19 @@ class authController {
         if (error) {
           res.status(500).json({ error });
         } else {
-          res.status(201).json({ message: 'User created successfully' });
+          const userData = {
+            userId: newUser.id,
+            nom: newUser.nom,
+            cognom: newUser.cognom,
+            email: newUser.email,
+            role: newUser.role,
+          };
+          const userToken = {
+            userId: newUser.id,
+            userRole: newUser.role,
+          };
+          const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '23h' });
+          res.status(201).json({ message: 'User created successfully', userData, token });
         }
       });
     }
