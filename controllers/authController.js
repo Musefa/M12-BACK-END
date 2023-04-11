@@ -91,12 +91,12 @@ class authController {
               }
       
               req.session.data = userData;
+              
               const userToken = {
                 userId: user.id,
                 userRole: user.role,
               };
-      
-              const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '23h' });
+              const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '1h' });
               const msg = { token, userData };
               res.status(200).json(msg);
             } else {
