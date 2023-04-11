@@ -96,13 +96,13 @@ class PlantillaController {
 
   static update_post(req, res, next) {
     const errors = validationResult(req);
-
+  
     var plantilla = new Plantilla({
       nom: req.body.nom,
       puntsOrdreDia: req.body.puntsOrdreDia,
       _id: req.params.id,
     });
-
+  
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });
     } else {
@@ -110,7 +110,7 @@ class PlantillaController {
         req.params.id,
         {
           nom: req.body.nom,
-          puntsOrdreDia: req.body.punts
+          puntsOrdreDia: req.body.puntsOrdreDia // Corregido aquí
         },
         { runValidators: true },
         function (err, plantillaFound) {
@@ -123,6 +123,7 @@ class PlantillaController {
       );
     }
   }
+  
 
 
   static async delete_get(req, res, next) {
