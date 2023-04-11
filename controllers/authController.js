@@ -65,7 +65,7 @@ class authController {
     // Si tenim errors en les dades enviades
     if (!errors.isEmpty()) {
       var message = 'Email and password must not be empty.';
-      res.render('users/login', { message: message });
+      return res.status(400).json({ message });
     }
     else {
       var email = req.body.email;
@@ -89,21 +89,19 @@ class authController {
                 'email': user.email,
                 'role': user.role,
               }
-
-              req.session.data = userData
+      
+              req.session.data = userData;
               const userToken = {
-                userId : user.id,
-                userRole : user.role
-              }
-
-              const token = jwt.sign(userToken, 'process.env.SECRET', { expiresIn: '23h' });
-              const msg = {token : token, rol : user.role};
-              res.status(201).send(msg)
-              //res.redirect('/home');
-            }
-            else {
-              var message = 'password incorrect. Login not possible';
-              res.render('users/login', { message: message });
+                userId: user.id,
+                userRole: user.role,
+              };
+      
+              const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '23h' });
+              const msg = { token, userData };
+              res.status(200).json(msg);
+            } else {
+              var message = 'Password incorrect. Login not possible';
+              res.status(400).json({ message });
             }
           }
         });
@@ -144,19 +142,23 @@ class authController {
 
       User.create(user, (error, newUser) => {
         if (error) {
-          res.render('users/register', { 'error': 'error' });
+          res.status(500).json({ error });
         } else {
-          /*   const userToken = {
-                userId : user.id,
-                userRole : user.role
-              }
-
-              const token = jwt.sign(userToken, 'process.env.SECRET', { expiresIn: '23h' });
-              const msg = {token : token, rol : user.role};
-              res.status(201).send(msg)*/ 
-          res.redirect('/auth/login')
+          const userData = {
+            userId: newUser.id,
+            nom: newUser.nom,
+            cognom: newUser.cognom,
+            email: newUser.email,
+            role: newUser.role,
+          };
+          const userToken = {
+            userId: newUser.id,
+            userRole: newUser.role,
+          };
+          const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '23h' });
+          res.status(201).json({ message: 'User created successfully', userData, token });
         }
-      })
+      });
     }
   }
 
