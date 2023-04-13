@@ -41,7 +41,7 @@ class PlantillaController {
         return next(err);
       }
 
-      res.render('plantillas/list', { result: result, htmlDecode: entities.decode })
+      res.json(result);
     });
   }
 
@@ -58,13 +58,8 @@ class PlantillaController {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      var plantilla = {
-        "nom": req.body.nom,
-        "puntsOrdreDia": req.body.puntsOrdreDia
-      }
-      res.render('plantillas/new', { errors: errors.array(), plantilla: plantilla })
-    }
-    else {
+      res.status(400).json({ errors: errors.array() });
+    } else {
       var nom = req.body.nom;
       var puntsOrdreDia = req.body.puntsOrdreDia;
 
@@ -75,11 +70,9 @@ class PlantillaController {
 
       newPlantilla.save(function (error) {
         if (error) {
-          var err = new Error("There was a problem saving the new template.");
-          err.status = 404;
-          return next(err);
+          res.status(500).json({ error: "There was a problem saving the new template." });
         } else {
-          res.redirect('/plantillas')
+          res.status(201).json(newPlantilla);
         }
       });
     }
@@ -103,37 +96,34 @@ class PlantillaController {
 
   static update_post(req, res, next) {
     const errors = validationResult(req);
-
+  
     var plantilla = new Plantilla({
       nom: req.body.nom,
       puntsOrdreDia: req.body.puntsOrdreDia,
       _id: req.params.id,
     });
-
+  
     if (!errors.isEmpty()) {
-      res.render("plantillas/update", { plantilla: plantilla, htmlDecode: entities.decode, errors: errors.array() });
-
-    }
-    else {
+      res.status(400).json({ errors: errors.array() });
+    } else {
       Plantilla.findByIdAndUpdate(
         req.params.id,
         {
           nom: req.body.nom,
-          puntsOrdreDia: req.body.punts
+          puntsOrdreDia: req.body.puntsOrdreDia // Corregido aquí
         },
         { runValidators: true },
         function (err, plantillaFound) {
           if (err) {
-            //return next(err);
-            res.render("plantillas/update", { plantilla: plantilla, error: err.message, htmlDecode: entities.decode });
-
+            res.status(500).json({ error: err.message });
+          } else {
+            res.status(200).json(plantillaFound);
           }
-
-          res.redirect('/plantillas');
         }
       );
     }
   }
+  
 
 
   static async delete_get(req, res, next) {
@@ -141,16 +131,13 @@ class PlantillaController {
   }
 
   static async delete_post(req, res, next) {
-
     Plantilla.findByIdAndRemove(req.params.id, function (error) {
       if (error) {
-        var err = new Error("Error deleting Plantilla");
-        err.status = 404;
-        return next(err);
+        res.status(500).json({ error: "Error deleting Plantilla" });
       } else {
-        res.redirect('/plantillas');
+        res.status(200).json({ message: "Plantilla deleted successfully" });
       }
-    })
+    });
   }
 }
 
