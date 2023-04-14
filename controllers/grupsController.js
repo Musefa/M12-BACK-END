@@ -27,22 +27,22 @@ class GrupController {
 
   static async list(req, res, next) {
     Grup.find()
-      .populate('membres')  // Carregar les dades de l'objecte Publisher amb el que està relacionat
+      .populate('membres')
       .exec(function (err, list) {
-        // En cas d'error
-
         if (err) {
-          // Crea un nou error personalitzat
-          var err = new Error("There was an unexpected problem retrieving your book list");
-          err.status = 404;
-          // i delega el seu tractament al gestor d'errors
-          return next(err);
+          return res.status(404).json({
+            error: {
+              message: "There was an unexpected problem retrieving your book list"
+            }
+          });
         }
-        //console.log(list); // imprime los resultados en la consola para depurar
-        // Tot ok: mostra el llistat
-        return res.render('grups/list', { list: list, htmlDecode: entities.decode })
+        // Retorna la lista en formato JSON
+        return res.status(200).json({
+          list: list
+        });
       });
   }
+
 
   static async create_get(req, res, next) {
 
@@ -60,11 +60,10 @@ class GrupController {
       };
 
       // mostrem el formulari i li passem les dades necessàries
-      return res.render('grups/new',
-        {
-          usersList: users_list,
-          grups: grup, htmlDecode: entities.decode
-        })
+      return res.status(200).json({
+        usersList: users_list,
+        grup: grup,
+      });
     }
     catch (error) {
       // En cas d'error al recuperar els llistats necessaris
@@ -78,41 +77,11 @@ class GrupController {
 
   static async create_post(req, res, next) {
 
-    // Recuperem els errors possibles de validació
     const errors = validationResult(req);
 
-    // Tenim errors en les dades enviades
     if (!errors.isEmpty()) {
-
-      try {
-        // Recupero llistats necessaris
-        var users_list = await User.find();
-
-
-        // Si no s'ha seleccionat cap checkbox 
-        // hem de tenir en compte que la variable req.body.genre no existirà      
-        if (typeof req.body.user === "undefined") req.body.user = [];
-
-        // mostro formulari i li passo llistats
-        // i els errors en format array per mostrar-los a usuari
-        res.render('grups/new',
-          {
-            usersList: users_list,
-            errors: errors.array(),
-            grups: req.body, htmlDecode: entities.decode
-          })
-      }
-      catch (error) {
-        var err = new Error("There was a problem showing the new book form");
-        err.status = 404;
-        return next(err);
-
-      }
-
-    }
-    else // cap errada en el formulari
-    {
-      // Crear un array amb únicament els autors emplenats
+      return res.status(400).json({ errors: errors.array() });
+    } else {
       const users = [];
       req.body.membres.forEach(function (user) {
         if (user.name != "")
@@ -120,20 +89,15 @@ class GrupController {
       });
       req.body.membres = users;
 
-      // Si no s'ha seleccionat cap checkbox  
       if (typeof req.body.membres === "undefined") req.body.membres = [];
 
       try {
-        // req.body.title=""; // Descomenta per generar un error per provar
         var newGrup = await Grup.create(req.body);
-        res.redirect('/grups')
+        return res.status(201).json({ newGrup });
       }
       catch (error) {
-        var err = new Error("There was an unexpected problem saving your book");
-        err.status = 404;
-        return next(err);
+        return res.status(500).json({ error: "There was an unexpected problem saving your book" });
       }
-
     }
   }
 
@@ -168,10 +132,6 @@ class GrupController {
   static async update_post(req, res, next) {
 
     try {
-
-      var users_list = await User.find();
-
-      // Només desaré els autors que s'han emplenat!
       const users = [];
       req.body.membres.forEach(function (user) {
         if (user.name != "")
@@ -182,45 +142,32 @@ class GrupController {
         nom: req.body.nom,
         tipus: req.body.tipus,
         membres: users,
-        _id: req.params.id, // This is required, or a new ID will be assigned!
+        _id: req.params.id,
       });
 
-      // Si no s'ha seleccionat cap checkbox      
       if (typeof req.body.membres === "undefined") req.body.membres = [];
-
 
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-
-        res.render('grups/update',
-          {
-            grups: grup,
-            errors: errors.array(),
-            usersList: users_list, htmlDecode: entities.decode
-          });
-      }
-      else {
-
+        return res.status(400).json({ errors: errors.array() });
+      } else {
         Grup.findByIdAndUpdate(
           req.params.id,
           grup,
           {},
           function (err, updatedGrup) {
             if (err) {
-              return next(err);
+              return res.status(500).json({ error: "There was an unexpected problem updating the grup" });
             }
-            res.redirect('/grups');
+            return res.status(200).json({ updatedGrup });
 
           });
       }
     }
     catch (error) {
-      var err = new Error("There was an unexpected problem updating the grup");
-      err.status = 404;
-      next(err)
+      return res.status(500).json({ error: "There was an unexpected problem updating the grup" });
     }
-
   }
 
   // Mostrar formulari per confirmar esborrat
@@ -230,21 +177,16 @@ class GrupController {
 
   }
 
-  // Esborrar llibre de la base de dades
   static async delete_post(req, res, next) {
 
     Grup.findByIdAndRemove(req.params.id, function (error) {
       if (error) {
-        var error = new Error("There was an unexpected problem deleting the grup");
-        error.status = 404;
-        next(error)
+        return res.status(500).json({ error: "There was an unexpected problem deleting the grup" });
       } else {
-
-        res.redirect('/grups')
+        return res.status(200).json({ message: "Grup deleted successfully" });
       }
     })
   }
-
 }
 
 module.exports = GrupController;
