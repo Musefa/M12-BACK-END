@@ -9,8 +9,8 @@ var ConvocatoriaSchema = new Schema({
     durada: { type: Number, required: true },
     lloc: { type: String, required: true },
     puntsOrdreDia: [{ type: String, required: true }],
-    convocats: [{ type: Schema.ObjectId, ref: "Grup" }],
-    plantilla: { type: Schema.ObjectId, ref: "Plantilla" },
+    convocats: [{ type: Schema.ObjectId, ref: "Grup", required: false }],
+    plantilla: { type: Schema.ObjectId, ref: "Plantilla", required: false },
     responsable: { type: Schema.ObjectId, ref: "User", required: false }
   });
   

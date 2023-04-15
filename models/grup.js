@@ -10,7 +10,7 @@ var GrupSchema = new Schema({
       "Públic","Privat"     
     ],
     default: "Privat" },
-    membres: [{ type: Schema.ObjectId, ref: "User" }]
+    membres: [{ type: Schema.ObjectId, ref: "User", required: false }]
     //usamos el nombre de la posición/objeto del esquema para listar el contenido en la view
     //usaremos membres para las funciones del controller
   });
