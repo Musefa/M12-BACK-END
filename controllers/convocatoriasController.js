@@ -67,7 +67,6 @@ class convocatoriaController {
           err.status = 404;
           return next(err);
         }
-        console.log("Convocatorias:", list);
         return res.status(200).json({ lista: list });
       });
   }
@@ -113,89 +112,65 @@ class convocatoriaController {
   }
 
   static async create_post(req, res, next) {
-
     // Recuperem els errors possibles de validació
     const errors = validationResult(req);
-
+  
     // Tenim errors en les dades enviades
     if (!errors.isEmpty()) {
-
       try {
         // Recupero llistats necessaris
         var grups_list = await Grup.find();
         var plantillas_list = await Plantilla.find();
-
-        // mostro formulari i li passo llistats
-        // i els errors en format array per mostrar-los a usuari
-        res.render('convocatorias/new',
-          {
-            grupsList: grups_list,
-            plantillasList: plantillas_list,
-            errors: errors.array(),
-            convocatoria: req.body, htmlDecode: entities.decode
-          })
+  
+        // Envío una respuesta en formato JSON con los llistados y los errores en formato array
+        res.status(400).json({ errors: errors.array(), grupsList: grups_list, plantillasList: plantillas_list, convocatoria: req.body });
+      } catch (error) {
+        res.status(500).json({ error: 'Ha ocurrido un error inesperado al mostrar el formulario de nueva convocatoria.' });
       }
-      catch (error) {
-        var err = new Error("There was a problem showing the new convocatoria form");
-        err.status = 404;
-        return next(err);
-
-      }
-
-    }
-    else // cap errada en el formulari
-    {
-      //const horaIniciDate = new Date(req.body.horaInici);
-      //const horaInici = horaIniciDate.getHours() + ':' + horaIniciDate.getMinutes();
-
+    } else { // cap errada en el formulari
       // Obtener el valor del input tipo time
-      //const horaIniciInput = document.querySelector('input[name="horaInici"]');
       const horaIniciValue = req.body.horaInici;
-
+  
       // Convertir el valor a un string en formato HH:MM
       const horaIniciDate = new Date();
       const [hours, minutes] = horaIniciValue.split(':');
       horaIniciDate.setHours(hours, minutes);
       const horaIniciString = horaIniciDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
-
+  
       // Asignar la hora de inicio formateada a la propiedad horaInici de req.body
       req.body.horaInici = horaIniciString;
-
-      // Crear un array amb únicament els autors emplenats
+  
+      // Crear un array con los grupos seleccionados
       const grups = [];
       req.body.convocats.forEach(function (grup) {
         if (grup != "")
           grups.push(grup);
       });
       req.body.convocats = grups;
-
+  
       // Si no s'ha seleccionat cap checkbox  
       if (typeof req.body.convocats === "undefined") req.body.convocats = [];
-
-      // Crear un array amb únicament els autors emplenats
+  
+      // Crear un array con los puntos del orden del día seleccionados
       const punts = [];
       req.body.puntsOrdreDia.forEach(function (punt) {
         if (punt != "")
           punts.push(punt);
       });
       req.body.puntsOrdreDia = punts;
-
+  
       // Si no s'ha seleccionat cap checkbox  
       if (typeof req.body.puntsOrdreDia === "undefined") req.body.puntsOrdreDia = [];
-
+  
       try {
-        // req.body.title=""; // Descomenta per generar un error per provar
         var newConvocatoria = await Convocatoria.create(req.body);
-        res.redirect('/convocatorias')
+        res.json({ message: 'Convocatoria creada correctamente.' });
+      } catch (error) {
+        res.status(500).json({ error: 'Ha ocurrido un error inesperado al guardar la convocatoria.' });
       }
-      catch (error) {
-        var err = new Error("There was an unexpected problem saving your convocatoria");
-        err.status = 404;
-        return next(err);
-      }
-
     }
   }
+  
 
   static async update_get(req, res, next) {
     try {
@@ -236,12 +211,11 @@ class convocatoriaController {
   }
 
   static async update_post(req, res, next) {
-
     try {
       const users_list = await User.find();
       const grups_list = await Grup.find();
       const plantillas_list = await Plantilla.find();
-
+  
       // Només desaré els autors que s'han emplenat!
       const grups = [];
       if (typeof req.body.convocats !== "undefined") {
@@ -250,8 +224,7 @@ class convocatoriaController {
             grups.push(grup);
         });
       }
-
-
+  
       const punts = [];
       if (typeof req.body.puntsOrdreDia !== "undefined") {
         req.body.puntsOrdreDia.forEach(function (punt) {
@@ -259,8 +232,7 @@ class convocatoriaController {
             punts.push(punt);
         });
       }
-
-
+  
       const convocatoria = new Convocatoria({
         data: req.body.data,
         horaInici: req.body.horaInici,
@@ -272,26 +244,15 @@ class convocatoriaController {
         responsable: req.body.responsable,
         _id: req.params.id, // This is required, or a new ID will be assigned!
       });
-
+  
       if (typeof req.body.convocats === "undefined") req.body.convocats = [];
       if (typeof req.body.puntsOrdreDia === "undefined") req.body.puntsOrdreDia = [];
-
-
+  
       const errors = validationResult(req);
-
+  
       if (!errors.isEmpty()) {
-
-        res.render('convocatorias/update',
-          {
-            convo: convocatoria,
-            errors: errors.array(),
-            grupsList: grups_list,
-            usersList: users_list,
-            plantillasList: plantillas_list, htmlDecode: entities.decode
-          });
-      }
-      else {
-
+        res.status(400).json({ error: errors.array() });
+      } else {
         Convocatoria.findByIdAndUpdate(
           req.params.id,
           convocatoria,
@@ -300,18 +261,14 @@ class convocatoriaController {
             if (err) {
               return next(err);
             }
-            res.redirect('/convocatorias');
-
-          });
+            res.json({ message: 'Convocatoria actualizada correctamente.' });
+          }
+        );
       }
+    } catch (error) {
+      res.status(500).json({ error: 'Ha ocurrido un error inesperado al actualizar la convocatoria.' });
     }
-    catch (error) {
-      var err = new Error("There was an unexpected problem updating the convocatoria");
-      err.status = 404;
-      next(err)
-    }
-
-  }
+  }  
 
   static delete_get(req, res, next) {
 
