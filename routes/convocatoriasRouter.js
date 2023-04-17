@@ -1,21 +1,28 @@
 var express = require("express");
-var middelware = require("../middlewares/authenticate");
 var router = express.Router();
+var cors = require("cors");
+var authenticateToken = require("../middlewares/authenticateToken");
+
+const corsOptions = {
+    origin: "http://localhost:3000", // Cambia esto al dominio de tu frontend en producción
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+router.use(cors(corsOptions));
 
 const convocatoria_controller = require("../controllers/convocatoriasController");
 
-router.use([middelware.isAuth,middelware.hasRole('administrador')]);
+router.get("/", authenticateToken, convocatoria_controller.list);
 
-router.get("/", convocatoria_controller.list);
+router.get("/create",authenticateToken,  convocatoria_controller.create_get);
+router.post("/create", authenticateToken, convocatoria_controller.create_post);
 
-router.get("/create", convocatoria_controller.create_get);
-router.post("/create", convocatoria_controller.rules, convocatoria_controller.create_post);
+router.get("/delete/:id", authenticateToken, convocatoria_controller.delete_get);
+router.post("/delete/:id", authenticateToken, convocatoria_controller.delete_post);
 
-router.get("/delete/:id", convocatoria_controller.delete_get);
-router.post("/delete/:id", convocatoria_controller.delete_post);
-
-router.get("/update/:id", convocatoria_controller.update_get);
-router.post("/update/:id", convocatoria_controller.rules, convocatoria_controller.update_post);
+router.get("/update/:id", authenticateToken, convocatoria_controller.update_get);
+router.post("/update/:id", authenticateToken, convocatoria_controller.update_post);
 
 
 module.exports = router;
