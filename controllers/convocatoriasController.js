@@ -24,7 +24,7 @@ class convocatoriaController {
           err.status = 404;
           return next(err);
         }
-        return res.status(200).json({ lista: list });
+        return res.status(200).json({ list: list });
       });
   }
 
