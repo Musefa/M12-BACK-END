@@ -1,106 +1,55 @@
-var Convocatoria = require("../models/convocatoria");
-var Acta = require("../models/acta");
-var Acord = require("../models/acord"); // Añadir el modelo Acord
-
-const { body, validationResult } = require("express-validator");
-
-const entities = require("entities");
+const Convocatoria = require("../models/convocatoria");
+const Acta = require("../models/acta");
+const Acord = require("../models/acord");
+const { validationResult } = require("express-validator");
 
 class ActaController {
-  static rules = [
-    body("estat")
-      .notEmpty()
-      .withMessage("El estado no puede estar vacío.")
-      .isIn(["Oberta", "Tancada"])
-      .withMessage("El estado debe ser 'Oberta' o 'Tancada'."),
-    body("descripcions.*")
-      .notEmpty()
-      .withMessage("La descripción no puede estar vacía.")
-      .isLength({ max: 500 })
-      .withMessage("La descripción no puede tener más de 500 caracteres."),
-    body("convocatoria")
-      .notEmpty()
-      .withMessage("Debe seleccionar una convocatoria.")
-      .isMongoId()
-      .withMessage("La convocatoria seleccionada no es válida."),
-    body("acords.*")
-      .notEmpty()
-      .withMessage("Debe seleccionar al menos un acuerdo.")
-      .isMongoId()
-      .withMessage("El acuerdo seleccionado no es válido."),
-  ];
 
   static async list(req, res, next) {
     Acta.find()
       .populate('convocatoria')
-      .populate('acords')  // Añadir el populate para acords
+      .populate('acords')
       .exec(function (err, list) {
-
         if (err) {
-          var err = new Error("There was an unexpected problem retrieving your acta list");
-          err.status = 404;
-          return next(err);
+          return res.status(500).json({ error: "There was an unexpected problem retrieving your acta list" });
         }
-        return res.render('actas/list', { list: list, htmlDecode: entities.decode })
+        return res.json({ list: list });
       });
   }
 
   static async create_get(req, res, next) {
-
     try {
       const convocatoria_list = await Convocatoria.find();
-      const acord_list = await Acord.find(); // Añadir consulta para obtener acords
+      const acord_list = await Acord.find();
 
-      var acta = {
-        estat: '',
-        descripcions: [],
-        convocatoria: '',
-        acords: [], // Añadir el campo acords
-      };
-
-      return res.render('actas/new',
-        {
-          convocatoriaList: convocatoria_list,
-          acordList: acord_list, // Añadir acordList a la vista
-          actas: acta
-        })
+      return res.json({
+        convocatoriaList: convocatoria_list,
+        acordList: acord_list
+      });
     }
     catch (error) {
-      var err = new Error("There was a problem showing the new acta form");
-      err.status = 404;
-      return next(err);
-
+      return res.status(500).json({ error: "There was a problem showing the new acta form" });
     }
   }
 
   static async create_post(req, res, next) {
-
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-
       try {
         const convocatoria_list = await Convocatoria.find();
-        const acord_list = await Acord.find(); // Añadir consulta para obtener acords
+        const acord_list = await Acord.find();
 
-        if (typeof req.body.descripcions === "undefined") req.body.descripcions = [];
-        if (typeof req.body.acords === "undefined") req.body.acords = []; // Añadir verificación para acords
-
-        res.render('actas/new',
-          {
-            convocatoriaList: convocatoria_list,
-            acordList: acord_list, // Añadir acordList a la vista
-            errors: errors.array(),
-            actas: req.body
-          })
+        return res.status(400).json({
+          convocatoriaList: convocatoria_list,
+          acordList: acord_list,
+          errors: errors.array(),
+          actas: req.body
+        });
       }
       catch (error) {
-        var err = new Error("There was a problem showing the new acta form");
-        err.status = 404;
-        return next(err);
-
+        return res.status(500).json({ error: "There was a problem showing the new acta form" });
       }
-
     }
     else {
       const descripcions = [];
@@ -111,49 +60,38 @@ class ActaController {
       req.body.descripcions = descripcions;
 
       if (typeof req.body.descripcions === "undefined") req.body.descripcions = [];
-      if (typeof req.body.acords === "undefined") req.body.acords = []; // Añadir verificación para acords
+      if (typeof req.body.acords === "undefined") req.body.acords = [];
 
       try {
         var newActa = await Acta.create(req.body);
-        res.redirect('/actas')
+        res.status(201).json(newActa);
       }
       catch (error) {
-        var err = new Error("There was an unexpected problem saving your acta");
-        err.status = 404;
-        return next(err);
+        return res.status(500).json({ error: "There was an unexpected problem saving your acta" });
       }
     }
   }
 
   static async update_get(req, res, next) {
-
     try {
       const convocatoria_list = await Convocatoria.find();
-      const acord_list = await Acord.find(); // Añadir consulta para obtener acords
+      const acord_list = await Acord.find();
       const acta = await Acta.findById(req.params.id)
         .populate('convocatoria')
-        .populate('acords'); // Añadir populate para acords
+        .populate('acords');
 
-      if (acta == null) { // No results                
-        var err = new Error("Acta not found");
-        err.status = 404;
-        return next(err);
+      if (acta == null) {
+        return res.status(404).json({ error: "Acta not found" });
       }
-      // Successful, so render.
-      res.render("actas/update", {
+      return res.json({
         actas: acta,
         convocatoriaList: convocatoria_list,
-        acordList: acord_list, htmlDecode: entities.decode
-      }); // Añadir acordList a la vista
-
+        acordList: acord_list
+      });
     }
     catch (error) {
-      var err = new Error("There was an unexpected problem showing the selected acta");
-      console.log(error)
-      err.status = 404;
-      next(err)
+      return res.status(500).json({ error: "There was an unexpected problem showing the selected acta" });
     }
-
   }
 
   static async update_post(req, res, next) {
@@ -161,7 +99,7 @@ class ActaController {
     try {
 
       const convocatoria_list = await Convocatoria.find();
-      const acord_list = await Acord.find(); // Añadir consulta para obtener acords
+      const acord_list = await Acord.find();
 
       const descripcions = [];
       req.body.descripcions.forEach(function (desc) {
@@ -173,65 +111,53 @@ class ActaController {
         estat: req.body.estat,
         descripcions: descripcions,
         convocatoria: req.body.convocatoria,
-        acords: req.body.acords, // Añadir el campo acords
+        acords: req.body.acords,
         _id: req.params.id,
       });
 
       if (typeof req.body.descripcions === "undefined") req.body.descripcions = [];
-      if (typeof req.body.acords === "undefined") req.body.acords = []; // Añadir verificación para acords
+      if (typeof req.body.acords === "undefined") req.body.acords = [];
 
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-
-        res.render('actas/update',
-          {
-            actas: acta,
-            errors: errors.array(),
-            convocatoriaList: convocatoria_list,
-            acordList: acord_list
-          }); // Añadir acordList a la vista                 
+        return res.status(400).json({
+          actas: acta,
+          errors: errors.array(),
+          convocatoriaList: convocatoria_list,
+          acordList: acord_list
+        });
       }
       else {
-
         Acta.findByIdAndUpdate(
           req.params.id,
           acta,
           {},
           function (err, updatedActa) {
             if (err) {
-              return next(err);
+              return res.status(500).json({ error: "There was an unexpected problem updating the acta" });
             }
-            res.redirect('/actas');
-
+            res.status(200).json(updatedActa);
           });
       }
     }
     catch (error) {
-      var err = new Error("There was an unexpected problem updating the acta");
-      err.status = 404;
-      next(err)
+      return res.status(500).json({ error: "There was an unexpected problem updating the acta" });
     }
-
   }
 
   static delete_get(req, res, next) {
-
-    res.render("actas/delete", { id: req.params.id });
-
+    res.status(200).json({ id: req.params.id });
   }
 
   static async delete_post(req, res, next) {
-
     Acta.findByIdAndRemove(req.params.id, function (error) {
       if (error) {
-        var error = new Error("There was an unexpected problem deleting the acta");
-        error.status = 404;
-        next(error)
+        return res.status(500).json({ error: "There was an unexpected problem deleting the acta" });
       } else {
-        res.redirect('/actas')
+        res.status(200).json({ message: 'Acta deleted successfully' });
       }
-    })
+    });
   }
 }
 

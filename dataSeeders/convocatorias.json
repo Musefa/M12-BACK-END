@@ -1,22 +1,24 @@
 {
-    "convocatorias" : [
-        { "data" : "", 
-          "horaInici" : "",
-          "durada" : 120,
-          "lloc" : "Aula C001",
-          "puntsOrdreDia" : [ "Notes","Excepcions" ],
-          "convocats" : [],
-          "plantilla" : "",
-          "responsable" : ""
-        },
-        { "data" : "", 
-          "horaInici" : "",
-          "durada" : 120,
-          "lloc" : "Aula C002",
-          "puntsOrdreDia" : [ "Conductes","Estat de l'alumnat" ],
-          "convocats" : [],
-          "plantilla" : "",
-          "responsable" : ""
-        }
-    ]
+  "convocatorias": [
+    {
+      "data": "",
+      "horaInici": "",
+      "durada": 120,
+      "lloc": "Aula C001",
+      "puntsOrdreDia": ["Notes", "Excepcions"],
+      "convocats": [],
+      "plantilla": "",
+      "responsable": ""
+    },
+    {
+      "data": "",
+      "horaInici": "",
+      "durada": 120,
+      "lloc": "Aula C002",
+      "puntsOrdreDia": ["Conductes", "Estat de l'alumnat"],
+      "convocats": [],
+      "plantilla": "",
+      "responsable": ""
+    }
+  ]
 }
