@@ -7,16 +7,32 @@ class ActaController {
 
   static async list(req, res, next) {
     Acta.find()
-      .populate('convocatoria')
+      .populate({
+        path: 'convocatoria',
+        model: 'Convocatoria',
+        populate: [
+          { path: 'responsable', model: 'User' },
+          {
+            path: 'convocats',
+            model: 'Grup',
+            populate: {
+              path: 'membres',
+              model: 'User',
+            },
+          },
+        ],
+      })
       .populate('acords')
       .populate('creador')
       .exec(function (err, list) {
         if (err) {
-          return res.status(500).json({ error: "There was an unexpected problem retrieving your acta list" });
+          var err = new Error("There was an unexpected problem retrieving your acta list");
+          err.status = 404;
+          return next(err);
         }
-        return res.json({ list: list });
+        return res.status(200).json({ list: list });
       });
-  }
+  }  
 
   static async create_get(req, res, next) {
     try {
