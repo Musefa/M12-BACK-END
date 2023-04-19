@@ -13,11 +13,21 @@ class AcordController {
                 populate: {
                     path: 'convocatoria',
                     model: 'Convocatoria',
-                    populate: {
-                        path: 'responsable',
-                        model: 'User'
-                    }
-                }
+                    populate: [
+                        {
+                            path: 'responsable',
+                            model: 'User',
+                        },
+                        {
+                            path: 'convocats',
+                            model: 'Grup',
+                            populate: {
+                                path: 'membres',
+                                model: 'User',
+                            },
+                        },
+                    ],
+                },
             })
             .exec(function (err, list) {
                 if (err) {
