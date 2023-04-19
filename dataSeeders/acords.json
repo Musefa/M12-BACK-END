@@ -1,16 +1,20 @@
 {
   "acords": [
     {
+      "nom": "Acord 1",
       "dataInici": "",
       "dataFinal": "",
       "descripcio": "Descripción 1",
-      "acta": ""
+      "acta": "",
+      "creador": ""
     },
     {
+      "nom": "Acord 2",
       "dataInici": "",
       "dataFinal": "",
       "descripcio": "Descripción 2",
-      "acta": ""
+      "acta": "",
+      "creador": ""
     }
   ]
 }

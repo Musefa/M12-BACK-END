@@ -1,16 +1,26 @@
 {
   "actas": [
     {
+      "nom": "Acta 1",
       "estat": "Oberta",
-      "descripcions": ["Descripció 1", "Descripció 2"],
+      "descripcions": [
+        "Descripció 1",
+        "Descripció 2"
+      ],
       "convocatoria": "",
-      "acords": []
+      "acords": [],
+      "creador": ""
     },
     {
+      "nom": "Acta 2",
       "estat": "Tancada",
-      "descripcions": ["Descripció 3", "Descripció 4"],
+      "descripcions": [
+        "Descripció 3",
+        "Descripció 4"
+      ],
       "convocatoria": "",
-      "acords": []
+      "acords": [],
+      "creador": ""
     }
   ]
 }

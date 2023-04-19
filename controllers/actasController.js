@@ -9,6 +9,7 @@ class ActaController {
     Acta.find()
       .populate('convocatoria')
       .populate('acords')
+      .populate('creador')
       .exec(function (err, list) {
         if (err) {
           return res.status(500).json({ error: "There was an unexpected problem retrieving your acta list" });
@@ -78,7 +79,8 @@ class ActaController {
       const acord_list = await Acord.find();
       const acta = await Acta.findById(req.params.id)
         .populate('convocatoria')
-        .populate('acords');
+        .populate('acords')
+        .populate('creador');
 
       if (acta == null) {
         return res.status(404).json({ error: "Acta not found" });
@@ -108,10 +110,12 @@ class ActaController {
       });
 
       const acta = new Acta({
+        nom: req.body.nom,
         estat: req.body.estat,
         descripcions: descripcions,
         convocatoria: req.body.convocatoria,
         acords: req.body.acords,
+        creador: req.body.creador,
         _id: req.params.id,
       });
 

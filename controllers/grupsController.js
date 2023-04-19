@@ -7,6 +7,7 @@ class GrupController {
   static async list(req, res, next) {
     Grup.find()
       .populate('membres')
+      .populate('creador')
       .exec(function (err, list) {
         if (err) {
           return res.status(404).json({
@@ -30,6 +31,7 @@ class GrupController {
         nom: '',
         tipus: '',
         membres: [],
+        creador: ''
       };
 
       return res.status(200).json({
@@ -76,7 +78,8 @@ class GrupController {
     try {
       const users_list = await User.find();
       const grup = await Grup.findById(req.params.id)
-        .populate('membres');
+        .populate('membres')
+        .populate('creador');
 
       if (grup == null) {
         var err = new Error("Grup not found");
@@ -112,6 +115,7 @@ class GrupController {
         nom: req.body.nom,
         tipus: req.body.tipus,
         membres: users,
+        creador: req.body.creador,
         _id: req.params.id,
       });
 

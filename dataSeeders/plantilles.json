@@ -7,7 +7,8 @@
         "Excepcions",
         "Conductes",
         "Estat de l'alumnat"
-      ]
+      ],
+      "creador": null
     },
     {
       "nom": "Junta directiva",
@@ -16,7 +17,8 @@
         "Material escolar",
         "Gestió cafeteria",
         "Protocols d'emergència"
-      ]
+      ],
+      "creador": null
     }
   ]
 }

@@ -18,6 +18,7 @@ class convocatoriaController {
       })
       .populate('plantilla')
       .populate('responsable')
+      .populate('creador')
       .exec(function (err, list) {
         if (err) {
           var err = new Error("There was an unexpected problem retrieving your convocatoria list");
@@ -36,6 +37,7 @@ class convocatoriaController {
       const plantillas_list = await Plantilla.find();
 
       var convocatoria = {
+        nom: '',
         data: '',
         horaInici: '',
         durada: '',
@@ -43,7 +45,8 @@ class convocatoriaController {
         puntsOrdreDia: [],
         convocats: [],
         plantilla: '',
-        responsable: ''
+        responsable: '',
+        creador: ''
       };
 
       return res.render('convocatorias/new',
@@ -128,6 +131,7 @@ class convocatoriaController {
         })
         .populate('plantilla')
         .populate('responsable')
+        .populate('creador')
 
       if (convocatoria == null) {
         var err = new Error("Convocatoria not found");
@@ -173,6 +177,7 @@ class convocatoriaController {
       }
 
       const convocatoria = new Convocatoria({
+        nom: req.body.nom,
         data: req.body.data,
         horaInici: req.body.horaInici,
         durada: req.body.durada,
@@ -181,6 +186,7 @@ class convocatoriaController {
         convocats: grups,
         plantilla: req.body.plantilla,
         responsable: req.body.responsable,
+        creador: req.body.creador,
         _id: req.params.id,
       });
 

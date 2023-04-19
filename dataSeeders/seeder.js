@@ -58,6 +58,9 @@ async function seeder() {
   grupsJSON.grups[0].membres = [users[0].id, users[2].id];
   grupsJSON.grups[1].membres = [users[1].id];
 
+  grupsJSON.grups[0].creador = users[0].id;
+  grupsJSON.grups[1].creador = users[1].id;
+
   var grups = await Grup.insertMany(grupsJSON.grups);
 
   convocatoriasJSON.convocatorias[0].data = currentDate;
@@ -65,12 +68,14 @@ async function seeder() {
   convocatoriasJSON.convocatorias[0].convocats = grups[0].id;
   convocatoriasJSON.convocatorias[0].plantilla = plantilles[0].id;
   convocatoriasJSON.convocatorias[0].responsable = users[0].id;
+  convocatoriasJSON.convocatorias[0].creador = users[0].id;
 
   convocatoriasJSON.convocatorias[1].data = currentDate;
   convocatoriasJSON.convocatorias[1].horaInici = "08:10";
   convocatoriasJSON.convocatorias[1].convocats = grups[1].id;
   convocatoriasJSON.convocatorias[1].plantilla = plantilles[1].id;
   convocatoriasJSON.convocatorias[1].responsable = users[1].id;
+  convocatoriasJSON.convocatorias[1].creador = users[1].id;
 
   var convocatorias = await Convocatoria.insertMany(convocatoriasJSON.convocatorias);
 
@@ -83,6 +88,9 @@ async function seeder() {
   acordsJSON.acords[0].acta = null;
   acordsJSON.acords[1].acta = null;
 
+  acordsJSON.acords[0].creador = users[0].id;
+  acordsJSON.acords[1].creador = users[1].id;
+
   var acords = await Acord.insertMany(acordsJSON.acords);
 
   actasJSON.actas[0].convocatoria = convocatorias[0].id;
@@ -90,6 +98,9 @@ async function seeder() {
 
   actasJSON.actas[0].acords = [acords[0].id];
   actasJSON.actas[1].acords = [acords[1].id];
+
+  actasJSON.actas[0].creador = users[0].id;
+  actasJSON.actas[1].creador = users[1].id;
 
   var actas = await Acta.insertMany(actasJSON.actas);
 }

@@ -6,6 +6,7 @@ class AcordController {
 
     static async list(req, res, next) {
         Acord.find()
+            .populate('creador')
             .populate({
                 path: 'acta',
                 model: 'Acta',
@@ -31,10 +32,12 @@ class AcordController {
             const acta_list = await Acta.find().populate('convocatoria');
 
             var acord = {
+                nom: '',
                 dataInici: '',
                 dataFinal: '',
                 descripcio: '',
                 acta: '',
+                creador: '',
             };
 
             return res.status(200).json({
@@ -78,7 +81,7 @@ class AcordController {
     static async update_get(req, res, next) {
         try {
             const acta_list = await Acta.find().populate('convocatoria');
-            const acord = await Acord.findById(req.params.id).populate('acta');
+            const acord = await Acord.findById(req.params.id).populate('acta').populate('creador');
 
             if (acord == null) {
                 return res.status(404).json({ error: "Acuerdo no encontrado" });
@@ -100,10 +103,12 @@ class AcordController {
             const acta_list = await Acta.find();
 
             const acord = new Acord({
+                nom: req.body.nom,
                 dataInici: req.body.dataInici,
                 dataFinal: req.body.dataFinal,
                 descripcio: req.body.descripcio,
                 acta: req.body.acta,
+                creador: req.body.creador,
                 _id: req.params.id,
             });
 
