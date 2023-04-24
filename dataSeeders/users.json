@@ -13,7 +13,7 @@
       "nom": "Jesús",
       "cognom": "Paredes Melero",
       "email": "jepa139@vidalibarraquer.net",
-      "password": "admin1234@",
+      "password": "Admin1234@",
       "dni": "49423139A",
       "especialitat": "Informàtica",
       "role": "directiu"
@@ -22,7 +22,7 @@
       "nom": "Alan",
       "cognom": "Martínez Mendiola",
       "email": "alma031@vidalibarraquer.net",
-      "password": "admin@1234",
+      "password": "Admin1234@",
       "dni": "71695528C",
       "especialitat": "Informàtica",
       "role": "professor"
