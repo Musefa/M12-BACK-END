@@ -12,6 +12,7 @@ const grupsRouter = require('./routes/grupsRouter');
 const convocatoriasRouter = require('./routes/convocatoriasRouter');
 const actasRouter = require('./routes/actasRouter');
 const acordsRouter = require('./routes/acordsRouter');
+const userRouter = require('./routes/userRouter');
 
 const app = express();
 
@@ -74,6 +75,7 @@ app.use('/convocatorias', convocatoriasRouter);
 app.use('/actas', actasRouter);
 app.use('/acords', acordsRouter);
 app.use('/auth', authRouter);
+app.use('/user', userRouter);
 
 function errorResponder(err, req, res, next) {
 
