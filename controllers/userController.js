@@ -35,6 +35,7 @@ class UserController {
             dni: req.body.dni,
             especialitat: req.body.especialitat,
         };
+
         if (req.body.newPassword) {
             const hashpwd = await bcrypt.hash(req.body.newPassword, 12);
             updateFields.password = hashpwd;
@@ -54,5 +55,6 @@ class UserController {
         );
     }
 }
+
 
 module.exports = UserController;
