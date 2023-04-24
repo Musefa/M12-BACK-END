@@ -15,4 +15,6 @@ const user_controller = require("../controllers/userController");
 
 router.post("/update/:id", authenticateToken, user_controller.update_post);
 
+router.post("/delete/:id", authenticateToken, user_controller.delete_post);
+
 module.exports = router;

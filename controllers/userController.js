@@ -54,6 +54,16 @@ class UserController {
             }
         );
     }
+
+    static async delete_post(req, res, next) {
+        User.findByIdAndRemove(req.params.id, function (error) {
+            if (error) {
+                res.status(500).json({ error: "Error deleting User" });
+            } else {
+                res.status(200).json({ message: "User deleted successfully" });
+            }
+        });
+    }
 }
 
 
