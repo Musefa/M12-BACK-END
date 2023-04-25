@@ -15,7 +15,8 @@ var ActaSchema = new Schema({
     descripcions: [{ type: String, required: true }],
     convocatoria: { type: Schema.ObjectId, ref: "Convocatoria" },
     acords: [{ type: Schema.ObjectId, ref: "Acord", required: false }],
-    creador: { type: Schema.ObjectId, ref: "User", required: false }
+    creador: { type: Schema.ObjectId, ref: "User", required: false },
+    assistents: [{ type: Schema.ObjectId, ref: "User", required: false }]
   });
   
   ActaSchema.plugin(mongoosePaginate);

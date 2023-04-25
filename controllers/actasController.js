@@ -24,6 +24,7 @@ class ActaController {
       })
       .populate('acords')
       .populate('creador')
+      .populate('assistents')
       .exec(function (err, list) {
         if (err) {
           var err = new Error("There was an unexpected problem retrieving your acta list");
@@ -69,6 +70,13 @@ class ActaController {
       }
     }
     else {
+      const assistents = [];
+      req.body.assistents.forEach(function (assistent) {
+        if (assistent.name != "")
+          assistents.push(assistent);
+      });
+      req.body.assistents = assistents;
+
       const descripcions = [];
       req.body.descripcions.forEach(function (desc) {
         if (desc != "")
@@ -77,6 +85,7 @@ class ActaController {
       req.body.descripcions = descripcions;
 
       if (typeof req.body.descripcions === "undefined") req.body.descripcions = [];
+      if (typeof req.body.assistents === "undefined") req.body.assistents = [];
       if (typeof req.body.acords === "undefined") req.body.acords = [];
 
       try {
@@ -125,6 +134,13 @@ class ActaController {
           descripcions.push(desc);
       });
 
+      const assistents = [];
+      req.body.assistents.forEach(function (assistent) {
+        if (assistent.name != "")
+          assistents.push(assistent);
+      });
+      req.body.assistents = assistents;
+
       const acta = new Acta({
         nom: req.body.nom,
         estat: req.body.estat,
@@ -132,10 +148,12 @@ class ActaController {
         convocatoria: req.body.convocatoria,
         acords: req.body.acords,
         creador: req.body.creador,
+        assistents: req.body.assistents,
         _id: req.params.id,
       });
 
       if (typeof req.body.descripcions === "undefined") req.body.descripcions = [];
+      if (typeof req.body.assistents === "undefined") req.body.assistents = [];
       if (typeof req.body.acords === "undefined") req.body.acords = [];
 
       const errors = validationResult(req);

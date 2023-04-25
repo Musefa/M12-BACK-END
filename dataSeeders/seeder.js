@@ -102,5 +102,8 @@ async function seeder() {
   actasJSON.actas[0].creador = users[0].id;
   actasJSON.actas[1].creador = users[1].id;
 
+  actasJSON.actas[0].assistents = [users[0].id, users[2].id];
+  actasJSON.actas[1].assistents = [users[1].id, users[2].id];
+
   var actas = await Acta.insertMany(actasJSON.actas);
 }

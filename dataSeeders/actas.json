@@ -9,7 +9,8 @@
       ],
       "convocatoria": "",
       "acords": [],
-      "creador": ""
+      "creador": "",
+      "assistents": []
     },
     {
       "nom": "Acta 2",
@@ -20,7 +21,8 @@
       ],
       "convocatoria": "",
       "acords": [],
-      "creador": ""
+      "creador": "",
+      "assistents": []
     }
   ]
 }
