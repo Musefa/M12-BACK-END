@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname + '/public')));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
      console.log(`SERVIDOR ESCUCHANDO EN EL PUERTO ${port}`);
 });
 
@@ -84,4 +84,4 @@ function errorResponder(err, req, res, next) {
 
 app.use(errorResponder)
 
-module.exports = app;
+module.exports = { app, server };
