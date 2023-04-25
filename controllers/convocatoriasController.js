@@ -107,9 +107,9 @@ class convocatoriaController {
 
       try {
         var newConvocatoria = await Convocatoria.create(req.body);
-        res.json({ message: 'Convocatoria creada correctamente.' });
+        return res.status(200).json({ newConvocatoria });
       } catch (error) {
-        res.status(500).json({ error: 'Ha ocurrido un error inesperado al guardar la convocatoria.' });
+        return res.status(500).json({ error: 'Ha ocurrido un error inesperado al guardar la convocatoria.' });
       }
     }
   }
@@ -206,12 +206,12 @@ class convocatoriaController {
             if (err) {
               return next(err);
             }
-            res.json({ message: 'Convocatoria actualizada correctamente.' });
+            return res.status(200).json({ updatedConvocatoria});
           }
         );
       }
     } catch (error) {
-      res.status(500).json({ error: 'Ha ocurrido un error inesperado al actualizar la convocatoria.' });
+      return res.status(500).json({ error: 'Ha ocurrido un error inesperado al actualizar la convocatoria.' });
     }
   }
 
@@ -225,12 +225,9 @@ class convocatoriaController {
 
     Convocatoria.findByIdAndRemove(req.params.id, function (error) {
       if (error) {
-        var error = new Error("There was an unexpected problem deleting the convocatoria");
-        error.status = 404;
-        next(error)
+        return res.status(500).json({ error: "There was an unexpected problem deleting the convocatoria" });
       } else {
-
-        res.redirect('/convocatorias')
+        return res.status(200).json({ message: "Convocatoria deleted successfully" });
       }
     })
   }
