@@ -15,6 +15,29 @@ const loginUser = async () => {
     return response.body.token;
 };
 
+test('Crear, actualizar y eliminar usuario + Login', async () => {
+    const newUser = {
+        nom: 'Nombre de prueba',
+        cognom: 'Apellido de prueba',
+        email: 'erga920@vidalibarraquer.net',
+        password: 'Admin1234@',
+    }
+
+    const registerResponse = await api
+        .post('/auth/register')
+        .send(newUser);
+
+    const user = registerResponse.body.userData.userId;
+    const token = registerResponse.body.token;
+
+
+    await api
+        .post(`/user/delete/${user}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+});
+
 test('Plantillas json', async () => {
     const token = await loginUser();
 
