@@ -26,10 +26,25 @@ test('Crear, actualizar y eliminar usuario + Login', async () => {
     const registerResponse = await api
         .post('/auth/register')
         .send(newUser);
-
     const user = registerResponse.body.userData.userId;
     const token = registerResponse.body.token;
 
+    const updatedUser = {
+        nom: 'Nombre actualizado',
+        cognom: 'Apellido actualizado',
+        email: 'erga920@vidalibarraquer.net',
+        currentPassword: 'Admin1234@',
+        newPassword: 'NewPassword123@',
+        dni: '48029917Y',
+        especialitat: 'Especialidad de prueba',
+    };
+
+    await api
+    .post(`/user/update/${user}`)
+    .set('Authorization', `Bearer ${token}`)
+    .send(updatedUser)
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
 
     await api
         .post(`/user/delete/${user}`)
