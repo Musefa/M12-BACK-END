@@ -236,6 +236,123 @@ test('Actas json', async () => {
         .expect('Content-Type', /application\/json/);
 });
 
+test('Crear, actualizar y eliminar acta', async () => {
+    const token = await loginUser();
+    const userResponse = await api
+        .get('/auth/user')
+        .set('Authorization', `Bearer ${token}`);
+    const userId = userResponse.body._id;
+
+    const newGrup = {
+        nom: 'Grupo de prueba',
+        tipus: 'Privat',
+        membres: [],
+        creador: userId
+    };
+
+    const createResponseGrupo = await api
+        .post('/grups/create')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newGrup)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+    const grupId = createResponseGrupo.body.newGrup._id;
+
+    const newPlantilla = {
+        nom: 'Plantilla de prueba',
+        puntsOrdreDia: ['Punto 1', 'Punto 2'],
+        creador: userId
+    };
+
+    const createResponsePlantilla = await api
+        .post('/plantillas/create')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newPlantilla)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+    const plantillaId = createResponsePlantilla.body._id;
+
+    const newConvocatoria = {
+        nom: 'Convocatoria de prueba',
+        data: new Date(),
+        horaInici: '10:00',
+        durada: 120,
+        lloc: 'Sala de reuniones',
+        puntsOrdreDia: ['Punto 1', 'Punto 2'],
+        convocats: [grupId],
+        plantilla: plantillaId,
+        responsable: userId,
+        creador: userId
+    };
+
+    const createResponseConvocatoria = await api
+        .post('/convocatorias/create')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newConvocatoria)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    const convocatoriaId = createResponseConvocatoria.body.newConvocatoria._id;
+
+    const newActa = {
+        nom: 'Acta de prueba',
+        estat: 'Oberta',
+        descripcions: ['Descripción 1', 'Descripción 2'],
+        convocatoria: convocatoriaId,
+        acords: [],
+        creador: userId,
+        assistents: []
+    };
+
+    const createResponse = await api
+        .post('/actas/create')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newActa)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+    const actaId = createResponse.body._id;
+
+    const updatedActa = {
+        nom: 'Acta actualizada',
+        estat: 'Tancada',
+        descripcions: ['Descripción actualizada 1', 'Descripción actualizada 2'],
+        convocatoria: convocatoriaId,
+        acords: [],
+        creador: userId,
+        assistents: []
+    };
+
+    await api
+        .post(`/actas/update/${actaId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(updatedActa)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+    await api
+        .post(`/plantillas/delete/${plantillaId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+    await api
+        .post(`/grups/delete/${grupId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+    await api
+        .post(`/convocatorias/delete/${convocatoriaId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+    await api
+        .post(`/actas/delete/${actaId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+});
+
 test('Acuerdos json', async () => {
     const token = await loginUser();
 
