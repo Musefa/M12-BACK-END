@@ -1,27 +1,16 @@
-var express = require('express');
-var router = express.Router();
-var cors = require('cors');
+const express = require('express');
+const router = express.Router();
+const cors = require('cors');
 router.use(cors());
 
-// Require user controller.
-var authController = require('../controllers/authController');
+const authController = require('../controllers/authController');
 
-
-
-// GET request for login page.
 router.get('/login', authController.login_get);
-
-// POST request for login page.
 router.post('/login', authController.login_post);
 
-// GET request for logout page.
-router.get('/logout', authController.logout_get);
-
-// GET request for create User.
 router.get('/register', authController.register_get);
-
-// POST request for create User.
 router.post('/register', authController.register_post);
 
+router.get('/logout', authController.logout_get);
 
 module.exports = router;

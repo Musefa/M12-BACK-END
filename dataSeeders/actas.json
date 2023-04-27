@@ -1,14 +1,28 @@
 {
-    "actas" : [
-        { "estat" : "Oberta", 
-          "descripcions" : [ "Descripció 1","Descripció 2" ],
-          "convocatoria" : "",
-          "acords" : []
-        },
-        { "estat" : "Tancada", 
-          "descripcions" : [ "Descripció 3","Descripció 4" ],
-          "convocatoria" : "",
-          "acords" : []
-        }
-    ]
+  "actas": [
+    {
+      "nom": "Acta 1",
+      "estat": "Oberta",
+      "descripcions": [
+        "Descripció 1",
+        "Descripció 2"
+      ],
+      "convocatoria": "",
+      "acords": [],
+      "creador": "",
+      "assistents": []
+    },
+    {
+      "nom": "Acta 2",
+      "estat": "Tancada",
+      "descripcions": [
+        "Descripció 3",
+        "Descripció 4"
+      ],
+      "convocatoria": "",
+      "acords": [],
+      "creador": "",
+      "assistents": []
+    }
+  ]
 }

@@ -1,68 +1,17 @@
-var User = require("../models/user");
-var bcrypt = require('bcryptjs');
-const { body, validationResult } = require("express-validator");
+const User = require("../models/user");
+const bcrypt = require('bcryptjs');
+const { validationResult } = require("express-validator");
 const jwt = require('jsonwebtoken');
 
-
 class authController {
-  static loginRules = [
-    // Validate and sanitize fields.
-    body("email")
-      .trim()
-      .notEmpty()
-      .withMessage("Email must not be empty."),
-    body("password")
-      .trim()
-      .notEmpty()
-      .withMessage('Password must not be empty'),
-  ];
-
-  static registerRules = [
-    body('nom')
-      .not()
-      .isEmpty()
-      .withMessage('nom is required'),
-    body('cognom')
-      .not()
-      .isEmpty()
-      .withMessage('cognom is required'),
-    body('email', 'email is required')
-      .not()
-      .isEmpty()
-      .withMessage('email is required')
-      .isEmail()
-      .withMessage('invalid format email')
-      .custom(async function (value, { req }) {
-        const user = await User.findOne({ email: value });
-
-        if (user) {
-          throw new Error('Email already in use.');
-
-        }
-        return true;
-      }).withMessage('That email address is already in use.'),
-    body('password')
-      .isLength({ min: 1 })
-      .withMessage('password is requried')
-      .custom((val, { req, loc, path }) => {
-        if (val !== req.body.confirm_password) {
-          throw new Error("Passwords don't match");
-        } else {
-          return true;
-        }
-      }),
-  ];
 
   static login_get(req, res, next) {
     res.render('users/login');
   }
 
   static login_post(req, res, next) {
-
-    // Recuperem els errors possibles de validació
     const errors = validationResult(req);
 
-    // Si tenim errors en les dades enviades
     if (!errors.isEmpty()) {
       var message = 'Email and password must not be empty.';
       return res.status(400).json({ message });
@@ -89,9 +38,9 @@ class authController {
                 'email': user.email,
                 'role': user.role,
               }
-      
+
               req.session.data = userData;
-              
+
               const userToken = {
                 userId: user.id,
                 userRole: user.role,
@@ -119,10 +68,8 @@ class authController {
 
   static async register_post(req, res, next) {
 
-    // Recuperem els errors possibles de validació
     const errors = validationResult(req);
 
-    // Si tenim errors en les dades enviades
     if (!errors.isEmpty) {
       var user = {
         "nom": req.body.nom,

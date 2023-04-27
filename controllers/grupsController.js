@@ -1,33 +1,13 @@
-var Grup = require("../models/grup");
-var User = require("../models/user");
-
-const { body, validationResult } = require("express-validator");
-
-const entities = require("entities");
+const Grup = require("../models/grup");
+const User = require("../models/user");
+const { validationResult } = require("express-validator");
 
 class GrupController {
-  static rules = [
-    body("nom")
-      .notEmpty()
-      .withMessage("El nombre no puede estar vacío.")
-      .trim()
-      .isLength({ min: 1 })
-      .escape(),
-    body("tipus")
-      .notEmpty()
-      .withMessage("El tipo no puede estar vacío.")
-      .trim()
-      .isLength({ min: 1 }),
-    body("membres.*")
-      .notEmpty()
-      .withMessage("Debe seleccionar al menos un miembro.")
-      .isMongoId()
-      .withMessage("El miembro seleccionado no es válido.")
-  ];
 
   static async list(req, res, next) {
     Grup.find()
       .populate('membres')
+      .populate('creador')
       .exec(function (err, list) {
         if (err) {
           return res.status(404).json({
@@ -36,7 +16,6 @@ class GrupController {
             }
           });
         }
-        // Retorna la lista en formato JSON
         return res.status(200).json({
           list: list
         });
@@ -45,29 +24,22 @@ class GrupController {
 
 
   static async create_get(req, res, next) {
-
-    // Fem anar la versió async-wait per recuperar dades
-    // Els errors s'han de capturar amb try-catch
     try {
       const users_list = await User.find();
 
-      // En blanc, per renderitzar el formulari el primer cop
-      // i que les variables existeixin a la vista
       var grup = {
         nom: '',
         tipus: '',
         membres: [],
+        creador: ''
       };
 
-      // mostrem el formulari i li passem les dades necessàries
       return res.status(200).json({
         usersList: users_list,
         grup: grup,
       });
     }
     catch (error) {
-      // En cas d'error al recuperar els llistats necessaris
-      // li diem al gestor d'errors que el tracti...
       var err = new Error("There was a problem showing the new book form");
       err.status = 404;
       return next(err);
@@ -106,17 +78,18 @@ class GrupController {
     try {
       const users_list = await User.find();
       const grup = await Grup.findById(req.params.id)
-        .populate('membres');
+        .populate('membres')
+        .populate('creador');
 
-      if (grup == null) { // No results                
+      if (grup == null) {
         var err = new Error("Grup not found");
         err.status = 404;
         return next(err);
       }
-      // Successful, so render.
+
       res.render("grups/update", {
         grups: grup,
-        usersList: users_list, htmlDecode: entities.decode
+        usersList: users_list
       });
 
     }
@@ -142,6 +115,7 @@ class GrupController {
         nom: req.body.nom,
         tipus: req.body.tipus,
         membres: users,
+        creador: req.body.creador,
         _id: req.params.id,
       });
 
@@ -170,7 +144,6 @@ class GrupController {
     }
   }
 
-  // Mostrar formulari per confirmar esborrat
   static delete_get(req, res, next) {
 
     res.render("grups/delete", { id: req.params.id });
