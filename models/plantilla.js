@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 
 var PlantillaSchema = new Schema({
     nom: { type: String, required: true },
-    puntsOrdreDia: [{ type: String, required: true }]
+    puntsOrdreDia: [{ type: String, required: true }],
+    creador: { type: Schema.ObjectId, ref: "User", required: false }
   });
   
   PlantillaSchema.plugin(mongoosePaginate);

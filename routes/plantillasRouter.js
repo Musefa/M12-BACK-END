@@ -1,15 +1,15 @@
-var express = require("express");
-var router = express.Router();
-var cors = require("cors");
-var authenticateToken = require("../middlewares/authenticateToken");
+const express = require("express");
+const router = express.Router();
+const cors = require("cors");
+const authenticateToken = require("../middlewares/authenticateToken");
 
 const corsOptions = {
-    origin: "http://localhost:3000", // Cambia esto al dominio de tu frontend en producción
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  };
-  
-  router.use(cors(corsOptions));
+  origin: process.env.API_URL,
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+router.use(cors(corsOptions));
 
 const plantilla_controller = require("../controllers/plantillasController");
 

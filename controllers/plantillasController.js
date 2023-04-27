@@ -1,56 +1,32 @@
-var Plantilla = require("../models/plantilla");
-
-const { body, validationResult } = require("express-validator");
-
-const entities = require("entities");
+const Plantilla = require("../models/plantilla");
+const { validationResult } = require("express-validator");
 
 class PlantillaController {
-  static rules = [
-    body("nom")
-      .notEmpty()
-      .withMessage("El nombre no puede estar vacío.")
-      .isLength({ max: 20 })
-      .withMessage("El nombre no puede tener más de 20 caracteres.")
-      .custom(async function (value, { req }) {
-        const plantilla = await Plantilla.findOne({ nom: value });
-        if (plantilla) {
-          if (req.params.id !== plantilla.id) {
-            throw new Error("Este nombre de plantilla ya existe.");
-          }
-        }
-        return true;
-      }),
-    body("puntsOrdreDia.*")
-      .notEmpty()
-      .withMessage("El punto del orden del día no puede estar vacío.")
-      .isLength({ max: 200 })
-      .withMessage("El punto del orden del día no puede tener más de 200 caracteres."),
-  ];
 
   static async list(req, res, next) {
-    const options = {
-      page: req.query.page || 1,
-      limit: 10,
-      collation: {
-        locale: 'en',
-      },
-    };
-
-    Plantilla.paginate({}, options, function (err, result) {
-      if (err) {
-        return next(err);
-      }
-
-      res.json(result);
-    });
+    Plantilla.find()
+      .populate('creador')
+      .exec(function (err, list) {
+        if (err) {
+          return res.status(404).json({
+            error: {
+              message: "There was an unexpected problem retrieving your book list"
+            }
+          });
+        }
+        return res.status(200).json({
+          list: list
+        });
+      });
   }
 
   static create_get(req, res, next) {
     var plantilla = {
       "nom": "",
-      "puntsOrdreDia": []
+      "puntsOrdreDia": [],
+      "creador": ""
     }
-    res.render('plantillas/new', { plantilla: plantilla, htmlDecode: entities.decode });
+    res.render('plantillas/new', { plantilla: plantilla });
   }
 
   static create_post(req, res, next) {
@@ -62,10 +38,12 @@ class PlantillaController {
     } else {
       var nom = req.body.nom;
       var puntsOrdreDia = req.body.puntsOrdreDia;
+      var creador = req.body.creador;
 
       var newPlantilla = new Plantilla({
         nom: nom,
-        puntsOrdreDia: puntsOrdreDia
+        puntsOrdreDia: puntsOrdreDia,
+        creador: creador
       });
 
       newPlantilla.save(function (error) {
@@ -78,7 +56,6 @@ class PlantillaController {
     }
   }
 
-
   static update_get(req, res, next) {
     Plantilla.findById(req.params.id, function (err, plantilla) {
       if (err) {
@@ -90,19 +67,20 @@ class PlantillaController {
         return next(err);
       }
 
-      res.render("plantillas/update", { plantilla: plantilla, htmlDecode: entities.decode });
+      res.render("plantillas/update", { plantilla: plantilla });
     });
   }
 
   static update_post(req, res, next) {
     const errors = validationResult(req);
-  
+
     var plantilla = new Plantilla({
       nom: req.body.nom,
       puntsOrdreDia: req.body.puntsOrdreDia,
+      creador: req.body.creador,
       _id: req.params.id,
     });
-  
+
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });
     } else {
@@ -110,7 +88,8 @@ class PlantillaController {
         req.params.id,
         {
           nom: req.body.nom,
-          puntsOrdreDia: req.body.puntsOrdreDia // Corregido aquí
+          puntsOrdreDia: req.body.puntsOrdreDia,
+          creador: req.body.creador,
         },
         { runValidators: true },
         function (err, plantillaFound) {
@@ -123,8 +102,6 @@ class PlantillaController {
       );
     }
   }
-  
-
 
   static async delete_get(req, res, next) {
     res.render('plantillas/delete', { id: req.params.id })
